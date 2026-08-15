@@ -35,12 +35,16 @@ Zentrale Frage: *Gibt es einen ausreichend großen, wirtschaftlich attraktiven M
 │   ├── investment-thesis.md         Die 10 Investorenfragen + No-Go-Bedingungen
 │   └── financial-model.xlsx         5-Jahres-Modell, 3 Szenarien, Sensitivität, Returns
 ├── presentation/
-│   ├── kronos-investor-deck.pptx    20 Slides, vollständig editierbar
-│   └── kronos-investor-deck.pdf     Render zum schnellen Durchblättern
-├── website/                         Interaktive Investor-Website (React/Vite/GSAP)
+│   ├── kronos-investor-deck.pptx        20 Slides (EN), vollständig editierbar
+│   ├── kronos-investor-deck.pdf         Render zum schnellen Durchblättern (EN)
+│   ├── kronos-investor-deck-de.pptx     20 Slides (DE), vollständig editierbar
+│   └── kronos-investor-deck-de.pdf      Render (DE)
+├── website/                             Interaktive Investor-Website (React/Vite/GSAP, EN/DE)
 ├── scripts/
-│   ├── build_financial_model.py     regeneriert das XLSX
-│   └── build_investor_deck.js       regeneriert das PPTX
+│   ├── build_financial_model.py         regeneriert das XLSX
+│   ├── build_investor_deck.js           regeneriert das EN-PPTX
+│   ├── make_deck_de.py                  erzeugt build_investor_deck_de.js (Übersetzungstabelle)
+│   └── build_investor_deck_de.js        regeneriert das DE-PPTX
 └── .github/workflows/deploy-pages.yml   GitHub-Pages-Deployment
 ```
 
@@ -82,13 +86,15 @@ npm run preview      # → http://localhost:4173/kronos-mct-pitch/
 
 Der Workflow [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) baut und deployt `website/` bei jedem Push auf `main` (oder manuell via *workflow_dispatch*). Einmalig aktivieren: **Repo → Settings → Pages → Source: „GitHub Actions"**. Die Seite erscheint unter `https://<owner>.github.io/kronos-mct-pitch/`. (Base-Pfad ist in `website/vite.config.ts` gesetzt.)
 
-Hinweise: Scroll-Animationen (GSAP ScrollTrigger) respektieren `prefers-reduced-motion`; die Maschinen-Sequenz ist eine abstrahierte Visualisierung (keine realen CAD-Daten).
+**Features:** Lenis-Smooth-Scroll + GSAP ScrollTrigger, Preloader (einmal pro Session), kinetische Split-Typografie, gepinnte Machine-Assembly-Sequenz mit HUD-Zähler, horizontale Konfigurations-Galerie, animierte Preisband-Karte, interaktiver 3-Szenario-Finanzchart, Marquees, Kapitel-Rail. **Sprachen:** EN/DE-Umschalter in der Navigation (persistiert, Auto-Detection per Browser-Sprache). **Unterseiten:** `/technology`, `/financials`, `/research` (SPA-Fallback via `404.html` für GitHub-Pages-Deep-Links). Scroll-Animationen respektieren `prefers-reduced-motion`; die Maschinen-Sequenz ist eine abstrahierte Visualisierung (keine realen CAD-Daten).
 
 ## PowerPoint neu generieren
 
 ```bash
 npm install pptxgenjs react react-dom react-icons sharp   # einmalig, beliebiges Verzeichnis; ggf. NODE_PATH setzen
-node scripts/build_investor_deck.js                        # → presentation/kronos-investor-deck.pptx
+node scripts/build_investor_deck.js                        # → presentation/kronos-investor-deck.pptx (EN)
+python3 scripts/make_deck_de.py                            # erzeugt/aktualisiert das DE-Skript aus der Übersetzungstabelle
+node scripts/build_investor_deck_de.js                     # → presentation/kronos-investor-deck-de.pptx (DE)
 # PDF-Render (optional):
 soffice --headless --convert-to pdf --outdir presentation presentation/kronos-investor-deck.pptx
 ```
